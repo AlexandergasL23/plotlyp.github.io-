@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Código - Machine Learning</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        code { font-family: 'Fira Code', Consolas, Monaco, monospace; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+    <!-- Encabezado -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-500 text-white p-2 rounded-lg font-bold text-sm">ML</div>
+                <span class="font-semibold text-lg tracking-wide">Script Viewer</span>
+            </div>
+            <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-medium border border-emerald-500/20">ejemplo.py</span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-8 space-y-8">
+        
+        <!-- Presentación del Proyecto -->
+        <section class="bg-slate-800/40 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-4">
+            <h1 class="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                Machine Learning con Scikit-Learn y Plotly
+            </h1>
+            <p class="text-slate-400 leading-relaxed max-w-3xl">
+                Este documento interactivo presenta la estructura y el diseño lógico de un script de clasificación estadística. El modelo utiliza el algoritmo de <strong class="text-indigo-400">Random Forest</strong> para clasificar las especies del popular Dataset Iris y evalúa su rendimiento mediante métricas de precisión y gráficos analíticos.
+            </p>
+            
+            <!-- Resumen del Flujo -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/50">
+                    <div class="text-indigo-400 font-semibold mb-1">01. Preparación</div>
+                    <p class="text-xs text-slate-400">Carga del Dataset Iris y estructuración matricial con Pandas.</p>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/50">
+                    <div class="text-indigo-400 font-semibold mb-1">02. Entrenamiento</div>
+                    <p class="text-xs text-slate-400">Segmentación de datos (70/30) y ajuste del clasificador de ensamble.</p>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/50">
+                    <div class="text-indigo-400 font-semibold mb-1">03. Evaluación</div>
+                    <p class="text-xs text-slate-400">Cálculo de matrices de confusión y niveles de importancia de variables.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contenedor del Código -->
+        <section class="space-y-3">
+            <div class="flex justify-between items-center px-2">
+                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Código Fuente Completo</h2>
+                <span class="text-xs text-slate-500">Python 3.x</span>
+            </div>
+            
+            <div class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+                <div class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500/30"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/30"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/30"></div>
+                    <span class="text-xs text-slate-500 font-mono pl-2">ejemplo.py</span>
+                </div>
+                
+                <div class="p-4 md:p-6 overflow-x-auto text-sm leading-relaxed">
+                    <pre><code class="text-slate-300"><span class="text-pink-400">import</span> pandas <span class="text-pink-400">as</span> pd
+<span class="text-pink-400">import</span> numpy <span class="text-pink-400">as</span> np
+
+<span class="text-pink-400">from</span> sklearn.datasets <span class="text-pink-400">import</span> load_iris
+<span class="text-pink-400">from</span> sklearn.model_selection <span class="text-pink-400">import</span> train_test_split
+<span class="text-pink-400">from</span> sklearn.ensemble <span class="text-pink-400">import</span> RandomForestClassifier
+<span class="text-pink-400">from</span> sklearn.metrics <span class="text-pink-400">import</span> (
+    classification_report,
+    confusion_matrix,
+    accuracy_score
+)
+
+<span class="text-pink-400">import</span> plotly.express <span class="text-pink-400">as</span> px
+
+<span class="text-cyan-400">print</span>(<span class="text-amber-200">"="</span> * <span class="text-purple-400">60</span>)
+<span class="text-cyan-400">print</span>(<span class="text-amber-200">"MACHINE LEARNING CON SCIKIT-LEARN Y PLOTLY"</span>)
+<span class="text-cyan-400">print</span>(<span class="text-amber-200">"="</span> * <span class="text-purple-400">60</span>)
+
+iris = load_iris()
+
+df = pd.DataFrame(
+    iris.data,
+    columns=iris.feature_names
+)
+
+df[<span class="text-amber-200">"especie"</span>] = pd.Categorical.from_codes(
+    iris.target,
+    iris.target_names
+)
+
+<span class="text-cyan-400">print</span>(<span class="text-amber-200">"\nPrimeras filas del dataset:\n"</span>)
+<span class="text-cyan-400">print</span>(df.head())
+
+<span class="text-cyan-400">print</span>(<span class="text-amber-200">"\nDimensiones:"</span>, df.shape)
+
+
+fig = px.scatter(
+    df,
+    x=<span class="text-amber-200">"petal length (cm)"</span>,
+    y=<span class="text-amber-200">"petal width (cm)"</span>,
+    color=<span class="text-amber-200">"especie"</span>,
+    size=<span class="text-amber-200">"sepal length (cm)"</span>,
+    hover_data=[<span class="text-amber-200">"sepal width (cm)"</span>],
+    title=<span class="text-amber-200">"Distribución del Dataset Iris"</span>
+)
+
+fig.update_layout(template=<span class="text-amber-200">"plotly_white"</span>)
+fig.show()
+
+
+X = iris.data
+y = iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=<span class="text-purple-400">0.30</span>,
+    random_state=<span class="text-purple-400">42</span>,
+    stratify=y
+)
+
+
+modelo = RandomForestClassifier(
+    n_estimators=<span class="text-purple-400">150</span>,
+    random_state=<span class="text-purple-400">42</span>
+)
+
+modelo.fit(X_train, y_train)
+
+
+y_pred = modelo.predict(X_test)
+
+
+<span class="text-cyan-400">print</span>(<span class="text-amber-200">"\nExactitud del modelo:"</span>)
+<span class="text-cyan-400">print</span>(<span class="text-cyan-400">round(accuracy_score(y_test, y_pred), 4)</span>)
+
+<span class="text-cyan-400">print</span>(<span class="text-amber-200">"\nReporte de clasificación:\n"</span>)
+<span class="text-cyan-400">print</span>(
+    classification_report(
+        y_test,
+        y_pred,
+        target_names=iris.target_names
+    )
+)
+
+
+cm = confusion_matrix(y_test, y_pred)
+
+fig_cm = px.imshow(
+    cm,
+    text_auto=<span class="text-purple-400">True</span>,
+    x=iris.target_names,
+    y=iris.target_names,
+    color_continuous_scale=<span class="text-amber-200">"Blues"</span>,
+    labels=dict(
+        x=<span class="text-amber-200">"Predicción"</span>,
+        y=<span class="text-amber-200">"Valor Real"</span>,
+        color=<span class="text-amber-200">"Cantidad"</span>
+    ),
+    title=<span class="text-amber-200">"Matriz de Confusión"</span>
+)
+
+fig_cm.show()
+
+
+importancias = pd.DataFrame({
+    <span class="text-amber-200">"Variable"</span>: iris.feature_names,
+    <span class="text-amber-200">"Importancia"</span>: modelo.feature_importances_
+})
+
+importancias = importancias.sort_values(
+    by=<span class="text-amber-200">"Importancia"</span>,
+    ascending=<span class="text-purple-400">True</span>
+)
+
+fig_imp = px.bar(
+    importancias,
+    x=<span class="text-amber-200">"Importancia"</span>,
+    y=<span class="text-amber-200">"Variable"</span>,
+    orientation=<span class="text-amber-200">"h"</span>,
+    title=<span class="text-amber-200">"Importancia de Variables"</span>
+)
+
+fig_imp.update_layout(template=<span class="text-amber-200">"plotly_white"</span>)
+fig_imp.show()
+
+<span class="text-cyan-400">print</span>(<span class="text-amber-200">"\nProceso finalizado correctamente."</span>)</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center text-xs text-slate-500 pt-4">
+            Código estático estructurado para documentación y despliegue referencial.
+        </footer>
+    </main>
+
+</body>
+</html>
